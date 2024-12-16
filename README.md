@@ -30,6 +30,38 @@ renderer->endFrame();
 是`Renderer`的内部工具，Renderer调用FrameGraph来定义和调度复杂的渲染管线步骤。View、Scene、Renderable 提供具体的渲染内容，FrameGraph负责高效地渲染这些内容。
 
 Scene 将 Drawable 传递给 RenderPassBuilder，然后利用 RenderPassBuilder 创建一个 RenderPass("Color Pass")，在这个 RenderPass 中将 Primitive 的绘制命令添加到 Command 中，最后在 "Color Pass" 的 Execute 中异步执行这段绘制命令。
+
+```c++
+class VirtualResource;
+template<typename RESOURCE>
+class Resource : VirtualResource;
+template<typename RESOURCE>
+class ImportedResource : Resource<RESOURCE>;
+
+class DependencyGraph{
+  struct Edge;
+  class Node;
+}
+class ResourceNode : DependencyGraph::Node;
+class PassNode : DependencyGraph::Node;
+class RenderPassNode : PassNode;
+class PresentPassNode : PassNode;
+
+class FrameGraphPassExecutor;
+class FrameGraphPassBase : FrameGraphPassExecutor;
+template<typename Data>
+class FrameGraphPass : FrameGraphPassBase;
+template<typename Data, typename Execute>
+class FrameGraphPassConcrete : FrameGraphPass<Data>;
+class FrameGraphHandle;
+template<typename RESOURCE>
+class FrameGraphId : FrameGraphHandle;
+class FrameGraphResources;
+class FrameGraph {
+  class Builder;
+};
+```
+
 ## 五、源码
 ### 1. 关键类
 ```
